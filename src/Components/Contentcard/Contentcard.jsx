@@ -3,15 +3,18 @@ import {Content} from '../../Contexts/ContentContext';
 import {Quiz} from '../../Contexts/QuizContext';
 import {Nav} from '../../Contexts/NavContext';
 import {User} from '../../Contexts/UserContext';
+import {Class} from '../../Contexts/ClassContext';
 import Quizcard from '../Quizcard/Quizcard';
 import YouTube from 'react-youtube';
 import Modal from '../Modal/Modal';
+import "./Contentcard.css";
 
 const Contentcard = (props) => {
     const {states:ContentStates} = React.useContext(Content);
     const {states:QuizStates, actions:QuizActions} = React.useContext(Quiz);
     const {states:NavStates} = React.useContext(Nav);
     const {states:UserStates} = React.useContext(User);
+    const {actions:ClassActions} = React.useContext(Class);
     const [showQuiz, setShowQuiz] = React.useState(false);
     const video_id_extractor = (url) => {
         var video_id=url
@@ -31,7 +34,7 @@ const Contentcard = (props) => {
     return (
         <div>
             <h1>Content Card</h1>
-            <div>
+            <div >
                 {
                     !showQuiz && ContentStates && ContentStates.currentContent
                     ?
@@ -45,7 +48,7 @@ const Contentcard = (props) => {
                         }
                         <p>{ContentStates.currentContent.id}</p>
                         {
-                            UserStates.user.user_type === "instructor" &&
+                            UserStates.user.user_type === "instructor" ?
                             <div>
                                 <div>
                                     <button className="tab-button" onClick={()=>{
@@ -54,6 +57,11 @@ const Contentcard = (props) => {
                                     <Modal mode={"edit"}/>
                                 </div>
                             </div>
+                            :
+                            UserStates.user.user_type === "student" && ContentStates.currentContent.type === "class" &&
+                            <button className="tab-button" onClick={()=>{
+                                ClassActions.dropClassFunction(ContentStates.currentContent.id);
+                            }}>Drop Class</button>
                         }
                     </div>
                     :
